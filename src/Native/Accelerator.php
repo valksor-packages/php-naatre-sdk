@@ -68,8 +68,7 @@ final class Accelerator
         if (!extension_loaded('naatre') || !function_exists('naatre_native_info')) {
             return null;
         }
-        $metadata = naatre_native_info();
-        return is_array($metadata) ? $metadata : null;
+        return naatre_native_info();
     }
 
     /** @param array<string, mixed>|null $metadata */
@@ -86,14 +85,23 @@ final class Accelerator
         self::usesNative($capability);
     }
 
-    /** @param array<string, mixed>|null $metadata @return list<string> */
+    /**
+     * @param array<string, mixed>|null $metadata
+     * @return list<string>
+     */
     private static function stringList(?array $metadata, string $key): array
     {
         $value = $metadata[$key] ?? null;
-        if (!is_array($value) || !array_is_list($value)) {
+        if (!is_array($value)) {
             return [];
         }
-        return array_values(array_filter($value, is_string(...)));
+        $result = [];
+        foreach (array_keys($value) as $index) {
+            if (is_string($value[$index])) {
+                $result[] = $value[$index];
+            }
+        }
+        return $result;
     }
 
     private static function unavailable(string $code): never

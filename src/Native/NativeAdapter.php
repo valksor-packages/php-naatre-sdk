@@ -24,30 +24,54 @@ final class NativeAdapter
 
     public static function decode(string $input, Limits $limits): mixed
     {
-        /** @var mixed $decoded */
-        $decoded = self::invoke(static fn (): mixed => naatre_native_decode_json($input, ...$limits->arguments()));
-        return PureJson::fromDecoded($decoded);
+        return PureJson::fromDecoded(self::invoke(static fn (): mixed => naatre_native_decode_json(
+            $input,
+            $limits->maximumDepth,
+            $limits->maximumNodes,
+            $limits->maximumBytes,
+            $limits->maximumOutputBytes,
+        )));
     }
 
     public static function encode(mixed $value, Limits $limits): string
     {
-        $encoded = self::invoke(static fn (): string => naatre_native_encode_json(self::toNative($value), ...$limits->arguments()));
-        return is_string($encoded) ? $encoded : throw new ClientException('CLIENT_NATIVE_FAILURE');
+        return self::invoke(static fn (): string => naatre_native_encode_json(
+            self::toNative($value),
+            $limits->maximumDepth,
+            $limits->maximumNodes,
+            $limits->maximumBytes,
+            $limits->maximumOutputBytes,
+        ));
     }
 
     public static function canonicalize(string $input, Limits $limits): string
     {
-        $canonical = self::invoke(static fn (): string => naatre_native_canonicalize_json($input, ...$limits->arguments()));
-        return is_string($canonical) ? $canonical : throw new ClientException('CLIENT_NATIVE_FAILURE');
+        return self::invoke(static fn (): string => naatre_native_canonicalize_json(
+            $input,
+            $limits->maximumDepth,
+            $limits->maximumNodes,
+            $limits->maximumBytes,
+            $limits->maximumOutputBytes,
+        ));
     }
 
     public static function semanticHash(string $purpose, string $canonical, Limits $limits): string
     {
-        $digest = self::invoke(static fn (): string => naatre_native_semantic_hash($purpose, $canonical, ...$limits->arguments()));
-        return is_string($digest) ? $digest : throw new ClientException('CLIENT_NATIVE_FAILURE');
+        return self::invoke(static fn (): string => naatre_native_semantic_hash(
+            $purpose,
+            $canonical,
+            $limits->maximumDepth,
+            $limits->maximumNodes,
+            $limits->maximumBytes,
+            $limits->maximumOutputBytes,
+        ));
     }
 
-    /** @param callable(): mixed $operation */
+    /**
+     * @template T
+     * @param callable(): T $operation
+     * @return T
+     */
     private static function invoke(callable $operation): mixed
     {
         try {

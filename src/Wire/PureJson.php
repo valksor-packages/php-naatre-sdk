@@ -26,6 +26,7 @@ final class PureJson
 
     public static function decodeChecked(string $input, Limits $limits): mixed
     {
+        /** @var mixed $decoded */
         $decoded = self::decode($input, $limits);
         $nodes = 0;
         self::checkValueLimits($decoded, $limits, 1, $nodes);
@@ -116,8 +117,9 @@ final class PureJson
     {
         if ($value instanceof stdClass) {
             $entries = [];
-            foreach (get_object_vars($value) as $key => $member) {
-                $entries[] = new MapEntry((string) $key, self::fromDecoded($member));
+            foreach (array_keys(get_object_vars($value)) as $key) {
+                $name = self::objectKey($key);
+                $entries[] = new MapEntry($name, self::fromDecoded($value->{$name}));
             }
             return new ObjectValue($entries);
         }
@@ -162,10 +164,16 @@ final class PureJson
                 self::checkValueLimits($entry->value, $limits, $depth + 1, $nodes);
             }
         } elseif ($value instanceof ListValue) {
-            foreach ($value->values() as $entry) {
-                self::checkValueLimits($entry, $limits, $depth + 1, $nodes);
+            $values = $value->values();
+            foreach (array_keys($values) as $index) {
+                self::checkValueLimits($values[$index], $limits, $depth + 1, $nodes);
             }
         }
+    }
+
+    private static function objectKey(string|int $key): string
+    {
+        return is_int($key) ? (string) $key : $key;
     }
 
     private static function compareKeys(string $left, string $right): int

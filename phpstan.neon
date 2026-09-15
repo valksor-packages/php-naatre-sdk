@@ -5,7 +5,7 @@ parameters:
     - src
     - generated
     - sdkgen
-  stubFiles:
+  scanFiles:
     - stubs/naatre.php
   parallel:
     maximumNumberOfProcesses: 1

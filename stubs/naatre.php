@@ -27,7 +27,10 @@ namespace {
     function naatre_native_encode_json(mixed $value, int $maximumDepth, int $maximumNodes, int $maximumBytes, int $maximumOutputBytes): string {}
     function naatre_native_canonicalize_json(string $input, int $maximumDepth, int $maximumNodes, int $maximumBytes, int $maximumOutputBytes): string {}
     function naatre_native_validate_json(string $input, int $maximumDepth, int $maximumNodes, int $maximumBytes, int $maximumOutputBytes): bool {}
-    /** @param list<string> $inputs @return list<string> */
+    /**
+     * @param list<string> $inputs
+     * @return list<string>
+     */
     function naatre_native_batch_canonicalize(array $inputs, int $maximumDepth, int $maximumNodes, int $maximumBytes, int $maximumOutputBytes): array {}
     function naatre_native_semantic_hash(string $purpose, string $canonical, int $maximumDepth, int $maximumNodes, int $maximumBytes, int $maximumOutputBytes): string {}
     function naatre_native_parse(string $kind, string $input, int $maximumDepth, int $maximumNodes, int $maximumBytes, int $maximumOutputBytes): \Naatre\Native\Representation {}
