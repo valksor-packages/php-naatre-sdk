@@ -4,7 +4,7 @@
   "type": "library",
   "license": "Apache-2.0",
   "require": {
-    "php": ">=8.5 <8.7",
+    "php": ">=8.5 <8.8",
     "ext-iconv": "*",
     "ext-json": "*",
     "psr/http-client": "^1.0",
